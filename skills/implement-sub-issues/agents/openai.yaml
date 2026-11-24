@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implement sub-issues"
+  short_description: "Subagents implement every sub-issue of one parent issue, each on its own PR into an integration branch with a CodeRabbit review; then draft PR and preview links"
+  default_prompt: "Use $implement-sub-issues on parent issue #<number> in this repository."

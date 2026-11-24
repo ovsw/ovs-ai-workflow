@@ -38,25 +38,37 @@ it with the template's current version; edit the template, not this part.
 - **Logins:** page-card work uses Clark, the agents' Basecamp user (person
   `<clarkPersonId>`): add `--profile claude` to every `basecamp` command for
   this work. Ovi is person `<oviPersonId>`.
-- **Clients see the card table.** The card holds
+- **Commands** (all with `--profile claude`; an id or the item's URL both
+  work):
+  - Read a card: `basecamp cards show <card> --md`; its subtasks:
+    `basecamp cards steps <card>`.
+  - Move a card: `basecamp cards move <card> --to <column id>`.
+  - Assign a card: `basecamp cards update <card> --assignee <person id>`.
+  - Comment: `printf '%s' '<html>' | basecamp comments create <card> -`.
+  - Read a plan: `basecamp docs show <document> --md`.
+  - Rewrite a plan: `basecamp docs update <document> --content '<html>'`.
+  - Download an uploaded file: `basecamp docs download <upload>`.
+- **The card is the client's.** Clients see the card table. The card holds
   only a short description (the plan link, what the page is, what to
-  check, the page link), subtasks for the facts the client confirms, the
+  check, the page link from Internal Review on), subtasks for the facts the client confirms, the
   page strategy comment, and the client's comments. Plan text and agent
   notes stay in the plan document.
-- **Taking a page:** read the card's assignees. If Clark is assigned,
-  another run has the page: stop and tell Ovi. Otherwise assign Clark,
-  read the card again, and start only if Clark is now assigned.
-- **Assignment shows whose turn it is:** Clark while a run works; at
-  handover, remove Clark and assign Ovi; at Client Review, the client's
+- **Taking a page:** Ovi chooses which cards a run works on, so two runs
+  never share a card. A run never assigns Clark to a card (Ovi,
+  2026-11-11): every card event wakes Lois, and self-assignment only adds
+  events.
+- **Assignment:** at handover, assign Ovi; at Client Review, the client's
   reviewer.
 - **Stage moves:**
   - `/page-plan`: the card moves to To Build once its plan document exists.
   - `/page-draft`: the card stays in To Build while the draft is written;
-    at handover it moves to Internal Review, assigned to Ovi.
+    at handover it moves to Internal Review, assigned to Ovi, with the
+    draft page link on the card.
   - `/page-polish`: the card keeps its stage; at the end, assign Ovi.
-  - Only Ovi moves a card to Client Review. With the move: publish the
+  - A card moves to Client Review only when Ovi says so: he moves it, or
+    tells a run to. With the move: publish the
     page and every document it references, write the card's short
-    description and page link below the plan link, add the facts to
+    description, switch the page link to the published view, add the facts to
     confirm as subtasks, and assign the client's reviewer.
   - The client moves an approved card to Accepted. An approval by comment
     or email counts too.
@@ -79,13 +91,22 @@ it with the template's current version; edit the template, not this part.
   cards update --body` replaces the whole description, so read it first.
 - **Handover notes:** comments on the page's plan document, headed "Draft
   notes" (`/page-draft`) or "Polish notes" (`/page-polish`).
-- **Page link for clients:** the hosted Studio's Presentation view of the
-  published page, never the website directly:
-  `<hostedStudioUrl>/presentation?preview=<URL-encoded page path>&perspective=published`
-  Clients need a Sanity login to open it; Ovi sends the invitations.
-  For a draft review link, leave out `perspective`: Studio shows drafts by
-  default. Never write `perspective=drafts`; Studio reads it as a release
-  name and the document panel shows an error.
+- **Page link on the card:** the second line of the description, right
+  below the plan link: `<div><strong>Page:</strong> <a href="<link>">Open
+  the page</a></div>`. Always a Studio Presentation view, never the website
+  directly. Who reviews decides the link (Ovi, 2026-11-18):
+  - From `/page-draft` handover (Internal Review, Ovi reviews): the local
+    Studio of the primary checkout, showing the draft:
+    `http://localhost:<local Studio port>/presentation?preview=<URL-encoded page path>`.
+    Start the dev servers if needed and keep them running. Studio shows
+    drafts by default. Never write `perspective=drafts`; Studio reads it as
+    a release name and the document panel shows an error.
+  - From Client Review (the client reviews): the hosted Studio, published
+    page, never localhost:
+    `<hostedStudioUrl>/presentation?preview=<URL-encoded page path>&perspective=published`.
+  A card in Internal Review or Client Review without this line is not
+  handed over: whoever reviews it opens the page from the card. Clients
+  need a Sanity login to open it; Ovi sends the invitations.
 <!-- ovs-workflow-setup:page-record:end -->
 
 ## Plan
@@ -130,13 +151,13 @@ Every plan and every draft uses these exact words.
 - Hosted Studio: <hostedStudioUrl>. Local Studio for agents: the port in
   `.worktree-ports.json` after `pnpm dev:worktree`.
 
-## Sections (<source>, <YYYY-MM-DD>)
+## Blocks (<source>, <YYYY-MM-DD>)
 
-Read this part before you choose sections for a page. Where it differs
-from the section catalogue in the shared page skills, this part wins.
+Read this part before you choose blocks for a page. Where it differs
+from the block catalogue in the shared page skills, this part wins.
 
 - **Use freely:** <block types>.
 - **Use only for their named job:** <block type → page or job>.
-- **Closing section:** <the block type, and variant, that ends a page>.
+- **Closing block:** <the block type that ends a page>.
 - **Do not use:** <block types, with the reason>.
 - **Missing photos:** <what a draft does when no fitting photo exists>.

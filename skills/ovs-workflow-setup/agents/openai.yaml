@@ -1,0 +1,4 @@
+interface:
+  display_name: "OVS Workflow Setup"
+  short_description: "Set up or check a site for the Basecamp page workflow"
+  default_prompt: "Use $ovs-workflow-setup in this repository and finish with the gap list for Ovi."

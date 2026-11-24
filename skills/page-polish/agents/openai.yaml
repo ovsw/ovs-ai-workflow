@@ -1,0 +1,4 @@
+interface:
+  display_name: "Page Polish"
+  short_description: "Fix block fit and photos on one drafted page"
+  default_prompt: "Use $page-polish for the requested page and continue until the report is ready for Ovi."
